@@ -1,0 +1,17 @@
+# IDE Files
+.project
+.classpath
+.settings/
+.idea/
+.vscode/
+*.iml
+.metadata/
+
+# Java / Maven
+/hello-backend/target/
+*.jar
+
+# Node.js
+/hello-frontend/node_modules/
+/hello-frontend/dist/
+npm-debug.log*
