@@ -1,0 +1,46 @@
+# Is workflow file ka naam
+name: CI - Build and Push Docker Images
+
+# Yeh workflow kab chalega?
+# Jab bhi 'develop' branch mein code 'push' hoga
+on:
+  push:
+    branches:
+      - develop
+
+# Jobs - Is workflow mein kya-kya kaam honge
+jobs:
+  build_and_push:
+    # Yeh job kahan chalega? (GitHub ke diye hue server par)
+    runs-on: ubuntu-latest
+
+    # Kaam ke steps
+    steps:
+      # Step 1: Hamare GitHub repository ka code download karo
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      # Step 2: Docker Hub mein login karo (hamare secrets use karke)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 3: Backend ki image build karo aur Docker Hub par push karo
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./gymSupplements/gymSupplements
+          file: ./gymSupplements/gymSupplements/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gym-supplements-backend:latest
+
+      # Step 4: Frontend ki image build karo aur Docker Hub par push karo
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./gym/gym
+          file: ./gym/gym/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gym-frontend:latest
